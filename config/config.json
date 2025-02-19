@@ -1,0 +1,11 @@
+{"pixel_format": "Mono8", "exposure_seconds": 10000, "buffer_handling_mode": "NewestOnly", "acquisition_mode": "Continuous", "gain_value": 15, 
+"gamma_value": 2, "log_output": "./log", "log_file": "dhm.log", "blacklevel_value": 0.9, "log_file_size": 10485760, "backup_count": 3, "image_type": "png", 
+"save_phase_images": false, "save_amp_images": false, "detection_batch_size": 120, "num_buffer": 1300, "batch_size": 80, 
+"save_predicted_aggs": true, "save_predicted_wbc": false, "save_predicted_plt": false, 
+"save_predicted_rbc": false, "img_width": 512, "img_height": 384, "phase_cropping": false, "amp_cropping": false,
+"containerization": false, "parallel_processing": true,
+"ai_detection_model": "C:/Users/Admin/Desktop/Projects/dhm_19_02_25/models/19_6_24_ai_yolovx8p2.pt", 
+"ovizio_detection_model": "C:/Users/Admin/Desktop/Projects/dhm_19_02_25/models/19_6_24_ovizio_yolovx8p2.pt", 
+"fin_net_path": "C:/Users/Admin/Desktop/Projects/dhm_19_02_25/models/with_ref_fin_32-64-64-32.pth",
+"cnn_net_path": "C:/Users/Admin/Desktop/Projects/dhm_19_02_25/models/with_ref_cnn_32-64-64-32.pth",
+"img_output": "C:/Users/Admin/Desktop/Projects/dhm_19_02_25/output", "reconstruction_gpu": "cuda:0", "detection_gpu": "cuda:1"}  
