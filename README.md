@@ -57,20 +57,10 @@
    + **	Previewing Images:**
       - *Realtime Preview:* To see the real-time hologram images from the microscope, click “Preview Images”. Users can check the images by previewing them.
 
-   + **	Complete pipline Processing:**
-      -	Still developing…..
 
-
-### Testing Instruction:
-   + This document provides the necessary steps to test the software using pytest.
-   + ** Installation**
-      - Before running the tests, you need to install pytest. You can do this via pip: ```pip install pytest```
-   + ** Setting Up Test Environment**
-      - Locate Test File: Find the test_acquisition.py, and test_detectyion files located in tests/base/.
       - Configure Paths:
          - Update VALID_H5_PATH with the path where the H5 capture file is stored.
          - Update INPUT_PATH with the path where the ovizio reconstructed phase images are located.
          - For object detection, update VALID_IMG_PATH and VALID_WEIGHT_PATH with the 
-   + ** Running Tests**
-      - To run the tests, use the following command: ```pytest tests```
+
    
