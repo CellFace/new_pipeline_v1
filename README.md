@@ -6,10 +6,10 @@ _Real-time Image Capture ▶ Reconstruction ▶ Object Detection ▶ Result Stor
 
 ## 🧩 0 ▪ Workflow
 
-1. **Image Capture:** Images are captured using the **Spinnaker SDK**, which provides a robust interface for camera operations and image acquisition.
-2. **Image Reconstruction:** Captured images are enhanced using an **AI-based reconstructor** for improved quality and further processing.
-3. **Object Detection:** A YOLO-based object detection model identifies and classifies objects within the reconstructed images.
-4. **Data Storage:** Final results are stored in a **containerized HDF5 file**, ensuring organized access to all outputs.
+1. 🖥️ **Image Capture:** Images are captured using the **Spinnaker SDK**, which provides a robust interface for camera operations and image acquisition.
+2. 🌀 **Image Reconstruction:** Captured images are enhanced using an **AI-based reconstructor** for improved quality and further processing.
+3. 🧠 **Object Detection:** A YOLO-based object detection model identifies and classifies objects within the reconstructed images.
+4. 🌐 **Data Storage:** Final results are stored in a **containerized HDF5 file**, ensuring organized access to all outputs.
 
 ---
 
@@ -17,7 +17,7 @@ _Real-time Image Capture ▶ Reconstruction ▶ Object Detection ▶ Result Stor
 
 | Component         | Version Tested   | Notes                        |
 |------------------|------------------|------------------------------|
-| **Python**        | 3.12              | Use CPython                  |
+| **Python**        | 3.8               | Use CPython                  |
 | **CUDA + cuDNN**  | 11.x / 8.x        | GPU with ≥8 GB recommended   |
 | **PyTorch**       | ≥ 2.1             | Install first, CUDA-matched |
 
@@ -101,7 +101,7 @@ Ensure the following are correctly updated in your config:
 
 ---
 
-## 🧵 4 ▪ Notes
+## 📝 4 ▪ Notes
 
 - Double-check **device compatibility** when installing PyTorch (e.g., CUDA version)
 - Ensure **Spinnaker SDK** is properly installed and the `.whl` matches Python version
