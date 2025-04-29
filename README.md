@@ -1,6 +1,23 @@
-# DHM Image Processing GUI Application
+# RT-HAD – Real-Time Holographic Aggregate Detector
 
 _Real-time Image Capture ▶ Reconstruction ▶ Object Detection ▶ Result Storage_
+
+RT-HAD is an end-to-end, microscope-agnostic framework for quantitative phase imaging that processes raw holograms into immediately actionable blood-cell analytics by chaining two purpose-built neural modules: OAH-Net, a physics-consistent CNN that performs learnable Fourier filtering, inverse propagation and phase un¬wrapping to reconstruct high quality and resolution amplitude/phase  images and a hybrid YOLOv8x-p2/graph object detector that operates on a high-resolution P2 head to localise blood cells as representing each cell in the graph to identify blood cell aggregate formation. The framework runs concurrently during sample measurement at the microscope while holograms are acquired (>100 FPS) to outputs blood cell typing and counts with blood cell aggregate quantification that raw data is not retained but clinically relevant cells of interests are stored. 
+
+---
+
+## ✨ What RT-HAD Does
+1. 📷 Reconstructs holograms into amplitude & phase images	
+2. 🔍 Detects all blood cells (erythrocytes, leukocytes, platelets) in a single forward pass	
+3. 🕸️ Builds a spatial graph to recognise platelet and leukocyte aggregates	
+4. ⚡ On-the-fly/real-time analysis for ultrafast turn-around time (≤ 10 ms per frame at 105 FPS)	
+5. 🛠 Microscope-agnostic—compatible with quantitative phase imaging microscopy with no to little architectural modification (however, you might need to train/fine-tune with your own data)	
+
+---
+
+## 🏗 Architectural Overview
+
+![Image](./architecturalOverview.jpg)
 
 ---
 
