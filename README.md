@@ -19,7 +19,23 @@ RT-HAD is an end-to-end, microscope-agnostic framework for quantitative phase im
 
 ![Image](./architecturalOverview.jpg)
 
+Total latency: ≤ 10 ms, buffered to guarantee zero frame-drop.
+
 ---
+
+## 📊 Module-at-a-Glance
+
+| **Module**        | **Backbone / Key Layers**                      | **Output**                        | **Inference (ms)†** | **Notes**                            |
+|------------------|-----------------------------------------------|-----------------------------------|----------------------|--------------------------------------|
+| **OAH-Net**       | Fourier-Imager-Head → Phase-unwrap             | Amplitude & Phase                 | ~4                   | Physics-guided; no hallucinations    |
+| **YOLOv8x-p2**    | CSPDarknet-53 + C2f blocks + P2 head (stride 4) | Bounding boxes & class labels     | ~5                   | Optimised for small objects          |
+| **Graph Builder** | Adjacency graph + distance matrix              | Aggregate labels + counts         | ~0.5                 | GPU-accelerated optional             |
+| **Whole pipeline**| —                                             | CSV + annotated images / JSON     | ≤ 10                 | 105 FPS sustained                    |
+
+†Measured mean inference speed over 10,000 frames on NVIDIA RTX 4090 with FP16 quantization by TensorRT
+
+---
+
 
 ## 🧩 0 ▪ Workflow
 
@@ -122,3 +138,19 @@ Ensure the following are correctly updated in your config:
 
 - Double-check **device compatibility** when installing PyTorch (e.g., CUDA version)
 - Ensure **Spinnaker SDK** is properly installed and the `.whl` matches Python version
+
+---
+
+## 📑  Citation
+
+@article{delikoyun2025rthad,
+
+  title  = {XXX},
+
+  author = {Delikoyun, K. *et al.*},
+
+  journal= {XXX},
+
+  year   = {2025}
+  
+}
