@@ -4,7 +4,7 @@ _Real-time Image Capture ▶ Reconstruction ▶ Object Detection ▶ Result Stor
 
 ---
 
-## 0 ▪ Workflow
+## 🧩 0 ▪ Workflow
 
 1. **Image Capture:** Images are captured using the **Spinnaker SDK**, which provides a robust interface for camera operations and image acquisition.
 2. **Image Reconstruction:** Captured images are enhanced using an **AI-based reconstructor** for improved quality and further processing.
@@ -13,7 +13,17 @@ _Real-time Image Capture ▶ Reconstruction ▶ Object Detection ▶ Result Stor
 
 ---
 
-## 1 ▪ Installation
+## ⚙️ 1. Prerequisites
+
+| Component         | Version Tested   | Notes                        |
+|------------------|------------------|------------------------------|
+| **Python**        | 3.12              | Use CPython                  |
+| **CUDA + cuDNN**  | 11.x / 8.x        | GPU with ≥8 GB recommended   |
+| **PyTorch**       | ≥ 2.1             | Install first, CUDA-matched |
+
+---
+
+## 🚀 2 ▪ Installation
 
 > **Note:** Use **Python 3.8** and create a new virtual environment with it.
 
@@ -44,7 +54,7 @@ python -c "import torch; print(torch.__version__)"
 
 ---
 
-## 2 ▪ Usage
+## 📦 3 ▪ Usage
 
 ### A. Starting the Application
 
@@ -91,7 +101,7 @@ Ensure the following are correctly updated in your config:
 
 ---
 
-## 3 ▪ Notes
+## 🧵 4 ▪ Notes
 
 - Double-check **device compatibility** when installing PyTorch (e.g., CUDA version)
 - Ensure **Spinnaker SDK** is properly installed and the `.whl` matches Python version
