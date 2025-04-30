@@ -154,3 +154,10 @@ Ensure the following are correctly updated in your config:
   year   = {2025}
   
 }
+
+---
+
+## 🌐 DataSets To download
+
+1. https://huggingface.co/datasets/sikomyo/CellFACE-DHM-Data
+2. https://huggingface.co/datasets/sikomyo/SampleHologramH5Data
