@@ -191,6 +191,30 @@ class ProcessH5Form(QMainWindow, LoggerMixin):
         self.png_checkbox.setDisabled(is_checked)
 
 
+class ProcessingWorker(QObject):
+    finished  = pyqtSignal()
+    message   = pyqtSignal(str)          # progress / status text
+
+    def __init__(self, main_app: MainApp):
+        super().__init__()
+        self.main_app = main_app
+
+    def run(self):
+        # emit a first message
+        self.message.emit("Processing started …")
+
+        try:
+            for _ in self.main_app.run(action="Processing"):
+                # if your generator can yield progress you may emit it here
+                pass
+        except Exception as e:
+            self.message.emit(f"Error: {e}")
+        else:
+            self.message.emit("Processing finished.")
+        finally:
+            self.finished.emit()
+
+
 class MainWindow(QMainWindow, LoggerMixin):
 
     def __init__(self):
@@ -284,12 +308,32 @@ class MainWindow(QMainWindow, LoggerMixin):
         fileMenu.addAction(exitAction)
 
     def start_processing(self):
-        result_gen = self.app.run(action="Processing")
-        try:
-            result = next(result_gen)
-        except StopIteration:
-            self.logger.info("No more Images to reconstruct.")
-        self.logger.info("Exit Reconstruction")
+        # Disable buttons so the user can’t start two jobs
+        self.start_process_button.setEnabled(False)
+        self.acquire_button.setEnabled(False)
+
+        # Create worker + thread
+        self.thread  = QThread(self)
+        self.worker  = ProcessingWorker(self.app)
+        self.worker.moveToThread(self.thread)
+
+        # Wire signals
+        self.thread.started.connect(self.worker.run)
+        self.worker.finished.connect(self.thread.quit)
+        self.worker.finished.connect(self.worker.deleteLater)
+        self.thread.finished.connect(self.thread.deleteLater)
+
+        # Show status messages
+        self.worker.message.connect(self.statusBar.showMessage)
+
+        # Re-enable buttons when done
+        self.worker.finished.connect(
+            lambda: self.start_process_button.setEnabled(True))
+        self.worker.finished.connect(
+            lambda: self.acquire_button.setEnabled(True))
+
+        # Start
+        self.thread.start()
 
     def start_preview(self):
         result_gen = self.app.run(action="Previewing")

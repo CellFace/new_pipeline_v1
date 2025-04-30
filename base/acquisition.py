@@ -86,6 +86,108 @@ class Acquisition(LoggerMixin):
         cv2.destroyAllWindows()
         return True
 
+    def process_immediate_capture_images(self, cam: object, num_buffer: int):
+        """
+        Captures and stores a list of converted Mono8 images from a camera buffer.
+
+        Args:
+            cam (object): The camera object from which images are captured.
+            num_buffer (int): Number of images to capture.
+
+        Returns:
+            bool: True if successful, False if an error occurs.
+        """
+
+        processor = PySpin.ImageProcessor()
+        processor.SetColorProcessing(PySpin.HQ_LINEAR)
+
+        try:
+            for i in range(num_buffer):
+                try:
+                    image_result = cam.GetNextImage(1000)
+                    if image_result.IsIncomplete():
+                        self.logger.info(f'Image {i} incomplete with status {image_result.GetImageStatus()}')
+                    else:
+                        image_converted = processor.Convert(image_result, PySpin.PixelFormat_Mono8)
+                        np_img = image_converted.GetNDArray() 
+                        self.holo_images.append(np.array(np_img).reshape(1536, 2048))
+                    image_result.Release()
+
+                except PySpin.SpinnakerException as ex:
+                    self.logger.error(f'[Buffer {i}] Error: {ex}')
+                    return False
+
+            self.logger.info(f"Total Captured Images: {len(self.holo_images)}")
+            
+            reconstruct = Reconstructor(device = self.config["reconstruction_gpu"], fin_net_path = self.config["fin_net_path"], cnn_net_path = self.config["cnn_net_path"])
+            self.logger.info(f'Total Images to reconstruct: {len(self.holo_images)}')
+            batch_size = self.config["batch_size"]
+            if len(self.holo_images) % batch_size == 0:
+                num_batches = len(self.holo_images) // batch_size
+            else:
+                num_batches = (len(self.holo_images) // batch_size) + 1
+            self.logger.info(f'Number of times to reconstruct: {num_batches}')
+            # Check if num_batches is zero and raise an error if it is
+            if num_batches == 0:
+                raise ValueError("Number of Batch is zero, please ensure there are enough images to process.")
+
+            phase_output_directory = os.path.join(self.config["img_output"], 'phase')
+            amp_output_directory = os.path.join(self.config["img_output"], 'amp')
+            os.makedirs(phase_output_directory, exist_ok=True)
+            os.makedirs(amp_output_directory, exist_ok=True)
+            self.holo_images = np.stack(self.holo_images)
+            self.ref_holo = self.holo_images[1].astype(np.float32) / 255.0
+            recon_speed = []
+            for batch_index in range(num_batches):
+                holo_batch = self.holo_images[batch_index * batch_size: (batch_index + 1) * batch_size]
+                holo_batch = holo_batch.astype(float) / 255 
+
+                start_event = torch.cuda.Event(enable_timing=True)
+                end_event = torch.cuda.Event(enable_timing=True)
+                start_event.record()
+                phase_imgs, amp_imgs = reconstruct.reconstruct(holo_batch, ref_holo=self.ref_holo)
+                phase_imgs *= 10
+                amp_imgs *= 10
+                end_event.record()
+                torch.cuda.synchronize()  # Wait for the events to be recorded
+                elapsed_time = start_event.elapsed_time(end_event)  # Time in milliseconds
+                recon_speed.append(elapsed_time / batch_size)                
+
+                # Iterate over reconstructed images to save and collect
+                for image_index, (phase_image_tensor, amp_image_tensor) in enumerate(zip(phase_imgs, amp_imgs)):
+                    phase_image = phase_image_tensor.detach().cpu().numpy()
+                    amp_image = amp_image_tensor.detach().cpu().numpy()
+                    self.phase_images.append(phase_image)  
+                    self.amp_images.append(amp_image)  
+
+                    # Calculate the correct ID based on batch_index and image_index
+                    image_id = batch_index * batch_size + image_index
+                    
+                    if self.config["save_phase_images"]:
+                        phase_image = np.clip(phase_image, 0, 1)
+                        phase_image_uint8 = (255 * phase_image).astype(np.uint8)
+                        phase_image_uint8 = cv2.cvtColor(phase_image_uint8, cv2.COLOR_GRAY2BGR) if phase_image.ndim == 2 else phase_image_uint8
+                        phase_output_file_path = os.path.join(phase_output_directory, f'phase_img_{image_id}.png')
+                        cv2.imwrite(phase_output_file_path, phase_image_uint8)
+
+                    if self.config["save_amp_images"]:
+                        amp_image = np.clip(amp_image, 0, 1)
+                        amp_image_uint8 = (255 * amp_image).astype(np.uint8)
+                        amp_image_uint8 = cv2.cvtColor(amp_image_uint8, cv2.COLOR_GRAY2BGR) if amp_image.ndim == 2 else amp_image_uint8
+                        amp_output_file_path = os.path.join(amp_output_directory, f'amp_img_{image_id}.png')
+                        cv2.imwrite(amp_output_file_path, amp_image_uint8)
+
+            self.logger.info(f'Reconstruction speed: {recon_speed}')
+            self.logger.info(f'Reconstruction speed per frame {np.mean(recon_speed):.3f} ms, std {np.std(recon_speed):.2f}')
+            self.holo_images = []
+            self.process_data(img_path='/', ovizio_reconstruction=False, png_upload=False)
+            
+            return True
+
+        except PySpin.SpinnakerException as ex:
+            self.logger.error(f'Error during processing: {ex}')
+            return False
+
     def get_images_slice(self, start_idx: int, end_idx: int):
 
         if start_idx < 0 or end_idx < 0 or end_idx < start_idx:
@@ -203,7 +305,7 @@ class Acquisition(LoggerMixin):
                 else:
                     break
 
-    def process_data(self, img_path, ovizio_reconstruction: bool, png_upload: bool):
+    def process_data(self, img_path, png_upload: bool):
         """
             Processes image data by performing object detection and aggregate analysis.
 
@@ -221,7 +323,7 @@ class Acquisition(LoggerMixin):
                 - Resets aggregate counts and clears image buffers after processing.
         """
         obj_detection = ObjectDetection()
-        if ovizio_reconstruction or png_upload:
+        if  png_upload:
             weight_path = self.config["ovizio_detection_model"]
         else:
             weight_path = self.config["ai_detection_model"]

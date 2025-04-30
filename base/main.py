@@ -79,8 +79,8 @@ class MainApp(LoggerMixin):
             if action == MainApp.Action.PREVIEWING:
                 self.acquisition.preview_images(cam)
             elif action == MainApp.Action.PROCESSING:
-                self.acquisition.process_buffer_images(cam, num_buffer=config["num_buffer"])
-                self.acquisition.process_images(save_images=config["save_images"], save_predicted_images=config["save_predicted_images"], cropping_cells=config["cropping_cells"], output_dir=config["img_output"])
+                self.logger.info(f"Action Triggered: {action}")
+                self.acquisition.process_immediate_capture_images(cam, num_buffer=config["num_buffer"])
                 torch.cuda.empty_cache()
             elif action == MainApp.Action.SAVING:
                 self.acquisition.save_buffer_images(cam, num_buffer=config["num_buffer"], image_type=config["image_type"])
@@ -206,17 +206,20 @@ class MainApp(LoggerMixin):
                 # Assuming setup_camera and perform_action are defined elsewhere
                 with self.init_camera(cam):
                     self.setup_camera(cam, config)
-                    while self.running: 
-                        self.perform_action(cam, action, config)
-                        if not self.running:  # Check the flag again after each action
-                            break
+                    if action == MainApp.Action.PREVIEWING:
+                        while self.running:
+                            self.perform_action(cam, action, config)
+                            if not self.running:
+                                break
+                    else:
+                        self.perform_action(cam, action, self.config)
                 del cam
         except Exception as e:
-            self.logger.error(f"An error occurred: {e}")
+            self.logger.error(f"An error occurred 195: {e}")
             yield None
         finally:
-            # Clear camera list before releasing system
-            cam_list.Clear()
-            # Release system instance
-            system.ReleaseInstance()            
+            cam_list.Clear()                  
+            del cam_list          
+            gc.collect()           
+
 
