@@ -159,5 +159,5 @@ Ensure the following are correctly updated in your config:
 
 ## 🌐 DataSets To download
 
-1. https://huggingface.co/datasets/sikomyo/CellFACE-DHM-Data
-2. https://huggingface.co/datasets/sikomyo/SampleHologramH5Data
+1. https://zenodo.org/records/15318749?token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6ImU5NDA3MmQ3LTQ1NTMtNDQ1NS05MDRmLWJjYTdjM2IzM2VlYSIsImRhdGEiOnt9LCJyYW5kb20iOiIwYWU3NTcxYzRmNGYzZmE5MjIwOTNhYWZmYjE3YzU2NyJ9.6W3H2JeDFlZQ5x61QZr9cVaACtHp0jL902IQpVXfs17FAg-k5mFssmmeGfyon6IRvC8bqD5Q8lEKLqTJ69rz4A
+
