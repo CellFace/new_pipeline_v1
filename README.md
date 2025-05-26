@@ -50,7 +50,7 @@ Total latency: ≤ 10 ms, buffered to guarantee zero frame-drop.
 
 | Component         | Version Tested   | Notes                        |
 |------------------|------------------|------------------------------|
-| **Python**        | 3.8               |  Python                     |
+| **Python**        | 3.8               | Python                     |
 | **CUDA + cuDNN**  | 11.x / 8.x        | GPU with ≥8 GB recommended   |
 | **PyTorch**       | ≥ 2.1             | Install first, CUDA-matched |
 
@@ -137,6 +137,7 @@ Ensure the following are correctly updated in your config:
 ## 📝 4 ▪ Notes
 
 - Double-check **device compatibility** when installing PyTorch (e.g., CUDA version)
+- Download Spinnaker SDK here https://www.teledynevisionsolutions.com/products/spinnaker-sdk/?model=Spinnaker%20SDK&vertical=machine%20vision&segment=iis
 - Ensure **Spinnaker SDK** is properly installed and the `.whl` matches Python version
 
 ---
