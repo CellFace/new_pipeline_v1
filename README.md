@@ -17,7 +17,7 @@ RT-HAD is an end-to-end, microscope-agnostic framework for quantitative phase im
 
 ## 🏗 Architectural Overview
 
-![Image](./architecturalOverview.jpg)
+![Image](./architecturalOverview.png)
 
 Total latency: ≤ 10 ms, buffered to guarantee zero frame-drop.
 
@@ -160,4 +160,4 @@ Ensure the following are correctly updated in your config:
 
 ## 🌐 DataSets To download
 
-1. https://zenodo.org/records/15338907
+1. https://zenodo.org/records/15574466
